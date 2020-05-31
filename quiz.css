@@ -30,10 +30,14 @@ h1 {
 
 .player {
     border: 1px solid black;
-    display: inline-block;
-    width: 100px;
+    width: 200px;
     height: 100px;
     border-radius: 10px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
+    font-weight: bold;
 }
 
 .choice {

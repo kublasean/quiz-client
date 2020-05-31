@@ -11,9 +11,10 @@ var isHost = false;
 function getPlayerHtml(player) {
     if (player == null || player.name == null || player.connected == null || player.score == null) { return ""; }
     var color = player.connected ? "green" : "grey";
-    var html = "<div class='player' style='color:" + color + ";'>";
+    var html = `<div class='player' style='color: ${color}; background-image: url("${player.icon}")'>`;
+    html += "<p>" + player.score + " pts.</p></div>";
+    //html += "<img src='" + player.icon + "'/>";
     html += "<p>" + player.name + "</p>";
-    html += "<p>" + player.score + "</p></div>";
     return html;
 }
 
@@ -95,12 +96,22 @@ function onStatus(data, sock) {
             break;
         }
         case ServerStateEnum.ANSWER: {
+            $("#QUESTION_PROMPT").text(json.server.prompt);
+            $("#QUESTION_NUM").text(json.server.number);
+            $("#ANSWER").find("h1").text(json.server.correct);
             break;
         }
         case ServerStateEnum.SCORES: {
+            console.log(json.server.ranked);
+            var html = "";
+            json.server.ranked.forEach((p) => {
+                html += getPlayerHtml(p);
+            });
+            $("#SCORES").html(html);
             break;
         }
         case ServerStateEnum.DONE: {
+            $("#DONE").find("h1").text(json.server.ranked[0].name);
             break;
         }
         default: {
