@@ -10,11 +10,11 @@ var isHost = false;
 
 function getPlayerHtml(player) {
     if (player == null || player.name == null || player.connected == null || player.score == null) { return ""; }
-    var color = player.connected ? "green" : "grey";
-    var html = `<div class='player' style='color: ${color}; background-image: url("${player.icon}")'>`;
-    html += "<p>" + player.score + " pts.</p></div>";
+    var color = player.connected ? "Lime" : "GoldenRod";
+    var html = `<div class='player' style='border-color: ${color}; background-image: url("${player.icon}")'>`;
+    html += "<p>" + player.score + " pts.</p>";
     //html += "<img src='" + player.icon + "'/>";
-    html += "<p>" + player.name + "</p>";
+    html += "<p>" + player.name + "</p></div>";
     return html;
 }
 
@@ -26,7 +26,7 @@ function getChoiceHtml(choice) {
 function onLogin(name, score) {
     $("#USER").show();
     $("#USERNAME").html(name);
-    $("#SCORE").html(score);
+    //$("#SCORE").html(score);
 }
 
 function onStatus(data, sock) {
@@ -54,9 +54,14 @@ function onStatus(data, sock) {
     switch (json.server.state) {
         case ServerStateEnum.LOBBY: {
             $("#LOBBY").show();
+            $("#QUESTION").hide();
+            $("#QUESTION_WAITING").hide();
+            $("#ANSWER").hide();
+            $("#SCORES").hide();
+            $("#DONE").hide();
             
             if (json.server.players != null && json.server.players.length >= 1) {
-                var html = "";
+                var html = "<h2>Lobby</h2>";
                 json.server.players.forEach((player) => {
                     html += getPlayerHtml(player);
                 });
@@ -76,9 +81,15 @@ function onStatus(data, sock) {
             break;
         }
         case ServerStateEnum.QUESTION: {
+            $("#LOBBY").hide();
+            $("#ANSWER").hide();
+            $("#SCORES").hide();
+            $("#DONE").hide();
             $("#QUESTION_WAITING").text(json.server.waitingOn);
             $("#QUESTION_PROMPT").text(json.server.prompt);
             $("#QUESTION_NUM").text(json.server.number);
+            
+            console.log(json);
             
             var html = "";
             json.server.choices.forEach((choice) => {
@@ -86,6 +97,21 @@ function onStatus(data, sock) {
             });
             $("#QUESTION_CHOICES").html(html);
             
+            if (json.client != null && json.client.answered != null) {
+                if (json.client.answered == true) {
+                    console.log("answered");
+                    $("#QUESTION_CHOICES").hide();
+                    $("#QUESTION_WAITING").fadeIn();
+                } else {
+                    console.log("did not answer");
+                    $("#QUESTION_CHOICES").fadeIn();
+                }
+            } 
+            else if (isHost) {
+                console.log("is host");
+                $("#QUESTION_WAITING").show();
+            }
+                        
             $(".choice").click(function() {
                 var resp = {
                     answer: $(this).text()
@@ -93,25 +119,66 @@ function onStatus(data, sock) {
                 console.log(resp);
                 sock.send(JSON.stringify(resp));
             });
+            
+            $("#QUESTION").fadeIn();
             break;
         }
-        case ServerStateEnum.ANSWER: {
-            $("#QUESTION_PROMPT").text(json.server.prompt);
-            $("#QUESTION_NUM").text(json.server.number);
-            $("#ANSWER").find("h1").text(json.server.correct);
+        case ServerStateEnum.ANSWER: {   
+            $("#LOBBY").hide();
+            $("#SCORES").hide();
+            $("#DONE").hide();      
+            
+            var node = $("#ANSWER").find("h1");
+            node.hide();
+            node.text(json.server.correct);
+            
+            $("#QUESTION").fadeOut(() => {
+                $("#QUESTION_WAITING").hide();
+                $("#ANSWER").fadeIn(() => {
+                    node.fadeIn("slow");
+                });
+            });
+            
             break;
         }
         case ServerStateEnum.SCORES: {
-            console.log(json.server.ranked);
-            var html = "";
-            json.server.ranked.forEach((p) => {
+            $("#LOBBY").hide();
+            $("#QUESTION").hide();
+            $("#QUESTION_WAITING").hide();
+            $("#DONE").hide();
+            
+            var html = "<h2>Standings</h2>";
+            json.server.players.forEach((p) => {
                 html += getPlayerHtml(p);
             });
             $("#SCORES").html(html);
+            
+            $("#ANSWER").fadeOut(() => {
+                $("#SCORES").fadeIn();
+            });
             break;
         }
         case ServerStateEnum.DONE: {
-            $("#DONE").find("h1").text(json.server.ranked[0].name);
+            $("#LOBBY").hide();
+            $("#QUESTION").hide();
+            $("#QUESTION_WAITING").hide();
+            $("#ANSWER").hide();
+            
+            var max = 0;
+            var winner = "";
+            json.server.players.forEach((p) => {
+                if (p.score > max) {
+                    winner = p.name;
+                    max = p.score;
+                } else if (p.score == max) {
+                    winner += p.name + " ";
+                }
+            });
+            
+            $("#DONE").find("h1").text(winner);
+            
+            $("#SCORES").fadeIn();
+            $("#DONE").fadeIn();
             break;
         }
         default: {

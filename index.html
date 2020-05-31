@@ -9,14 +9,12 @@
 <script src="quiz_client.js"></script>
 </head>
 <body class="w3-light-blue w3-container">
-<h1>WHALEN FAMILY TRIVIA</h1>
-<img src="icons/frog2.jpg"></img>
-<div id="USER" style="display:none">Name:<span id="USERNAME"></span> Score:<span id="SCORE"></span></div>
-
+<div id="USER" style="display:none">YOU ARE:<span id="USERNAME"></span></div>
 
 <div id="LOBBY" class="w3-container">
     <div id="LOBBY_PLAYERS" style="display:none"><p>No players have joined yet...</p></div>
     <form>
+        <h1>WHALEN FAMILY TRIVIA</h1>
         <p>NAME</p>
         <input type="text" name="name" placeholder="name thyself" required maxlength="20" pattern="[A-Za-z\s]{1,}" title="Letters and spaces only please"/><br>
         <p>SEKRIT CODE</p>
@@ -25,7 +23,7 @@
     </form>
 </div>
 
-<div id="QUESTION" class="w3-container">
+<div id="QUESTION" class="w3-container" style="display:none">
     <h3 id="QUESTION_NUM">Question 1 / 20</h3>
     <h2 id="QUESTION_PROMPT">What is Sean's favorite food?</h2>
     <div id="QUESTION_CHOICES">
@@ -34,18 +32,17 @@
         <button class="choice">Red Curry</button>
         <button class="choice">Onion Rings</button>
     </div>
-    <p id="QUESTION_WAITING">Waiting on Dan to answer...</p>
+    <p id="QUESTION_WAITING" style="display:none">Waiting on Dan to answer...</p>
 </div>
 
-<div id="ANSWER" class="w3-container">
-    <h3 id="QUESTION_NUM">Question 1 / 20</h3>
-    <h2 id="QUESTION_PROMPT">What is Sean's favorite food?</h2>
+<div id="ANSWER" class="w3-container" style="display:none">
+    <h3>Correct Answer:</h3>
     <h1>Mac 'n Cheese!</h1>
 </div>
 
-<div id="SCORES" class="w3-container"></div>
+<div id="SCORES" class="w3-container" style="display: none;"></div>
 
-<div id="DONE" class="w3-container">
+<div id="DONE" class="w3-container" style="display: none;">
     <h3>the winner is</h3>
     <h1>DAN</h1>
 </div>
