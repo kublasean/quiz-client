@@ -13,13 +13,12 @@ function getPlayerHtml(player) {
     var color = player.connected ? "Lime" : "GoldenRod";
     var html = `<div class='player' style='border-color: ${color}; background-image: url("${player.icon}")'>`;
     html += "<p>" + player.score + " pts.</p>";
-    //html += "<img src='" + player.icon + "'/>";
     html += "<p>" + player.name + "</p></div>";
     return html;
 }
 
 function getChoiceHtml(choice) {
-    var html = "<button class='choice'>" + choice + "</button>";
+    var html = "<div><button class='choice'>" + choice + "</button></div>";
     return html;
 }
 
@@ -194,7 +193,20 @@ $(document).ready(() => {
         e.preventDefault();
     });
     
-    var sock = new WebSocket("wss://" + location.hostname + ":3000/");
+    var sock = null;
+    try {
+        // production
+        sock = new WebSocket("wss://" + location.hostname + ":3000/");
+    }
+    catch (err) {
+        // local development
+        try {
+            sock = new WebSocket("ws://localhost:3000/");
+        }
+        catch (err) {
+            console.log("Server not running...")
+        }
+    }
 
     // init button callbacks here
     sock.onopen = function() {
@@ -216,14 +228,42 @@ $(document).ready(() => {
         $("#NEXT").click(function() {
             sock.send("next");
         });
-        
-        
-        
+                
     };
     
     sock.onmessage = function(event) {
         onStatus(event.data, sock);
     };
-    
+
+    sock.onerror = function(error) {
+        console.log("on error");
+        console.log(error);
+    };
+
+    /*onStatus(JSON.stringify({
+        server: {
+            players: [{
+                score: 0,
+                name: "Player 1",
+                connected: "true",
+                icon: "frog1.jpg"
+            }],
+            state: ServerStateEnum.QUESTION,
+            waitingOn: "",
+            prompt: "This is a dummy question?",
+            choices: ["a","b","c","d"],
+            number: "Question 1 of 20"
+        },
+        client: {
+            index: 0,
+            answered: false
+        }
+    }));
+
+    $("#LOBBY").hide();
+    $("#ANSWER").hide();
+    $("#DONE").hide();
+    $("#QUESTION_WAITING").hide();
+    $("#QUESTION").hide();*/
 
 });

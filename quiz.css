@@ -1,7 +1,19 @@
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
 body {
     text-align: center;
     font-family: consolas;
     font-size: large;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    color: white;
+    overflow: hidden;
 }
 
 form {
@@ -14,18 +26,21 @@ input {
     margin-bottom: 10px;
 }
 
+h1 {
+    font-weight: bold;
+}
+
+button {
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+    color: black;
+    background-color: white;
+    border: none;
+}
+
 button:hover {
     cursor: pointer;
-}
-
-h1 {
-    color: white;
-    font-weight: bold;
-}
-
-#USERNAME, #SCORE {
-    color: white;
-    font-weight: bold;
 }
 
 .player {
@@ -43,11 +58,39 @@ h1 {
     margin: 10px;
 }
 
-.choice {
-    width: 44%;
-    height: 100px;
-    padding: 6px;
-    margin: 10px;
-    border: 1px solid black;
-    background-color: white;
+#USER {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: blueviolet;
+    z-index: 1;
+    font-weight: bold;
 }
+
+#ADMIN {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    background-color: blueviolet;
+    z-index: 1;
+}
+
+#QUESTION_CHOICES div {
+    height: 25%;
+    width: 100%;
+    padding: 10px;
+}
+
+#title {
+    color: #FFF;
+    text-align: center;
+    font-family: "lato", sans-serif;
+    font-weight: 300;
+    font-size: 50px;
+    letter-spacing: 5px;
+
+    background: -webkit-linear-gradient(white, #38495a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
